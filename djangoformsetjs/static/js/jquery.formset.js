@@ -124,8 +124,7 @@
         window.setTimeout(onChangeDelete);
 
         // Delete the form if the delete button is pressed
-        var $deleteButton = $form.find(this.opts.deleteButton);
-        $deleteButton.bind('click', function() {
+        $form.on('click', this.opts.deleteButton, function() {
             $delete.attr('checked', true).change();
         });
     };
