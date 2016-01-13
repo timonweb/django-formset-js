@@ -38,7 +38,7 @@
         // Store a reference to this in the formset element
         this.$formset.data(pluginName, this);
 
-        var extras = ['animateForms'];
+        var extras = ['animateForms', 'markDeleted', 'numberNewForms'];
         $.each(extras, function(i, extra) {
             if ((extra in _this.opts) && (_this.opts[extra])) {
                 _this[extra]();
@@ -48,12 +48,19 @@
 
     Formset.defaults = {
         form: '[data-formset-form]',
+        newForm: '[data-formset-form-new]',
         emptyForm: 'script[type=form-template][data-formset-empty-form]',
         body: '[data-formset-body]',
         add: '[data-formset-add]',
         deleteButton: '[data-formset-delete-button]',
+        restoreButton: '[data-formset-restore-button]',
+        numbering: '[data-formset-numbering]',
+        deletedForm: 'data-formset-form-deleted',
+        deletedBackgroundClass: 'bg-danger',
         hasMaxFormsClass: 'has-max-forms',
-        animateForms: false
+        animateForms: false,
+        markDeleted: false,
+        numberNewForms: false,
     };
 
     Formset.prototype.addForm = function() {
@@ -86,19 +93,24 @@
         $form.data(pluginName + '__formPrefix', prefix);
 
         var $delete = $form.find('[name=' + prefix + '-DELETE]');
+        var $deleteButton = $form.find(this.opts.deleteButton);
+        var $restoreButton = $form.find(this.opts.restoreButton);
+    	var _this = this;
 
         var onChangeDelete = function() {
             if ($delete.is(':checked')) {
-                $form.attr('data-formset-form-deleted', '');
+                $form.attr(_this.opts.deletedForm, '');
                 // Remove required property and pattern attribute to allow submit, back it up to data field
                 $form.find(':required').data(pluginName + '-required-field', true).prop('required', false);
                 $form.find('input[pattern]').each(function() {
                     var pattern = $(this).attr('pattern');
                     $(this).data(pluginName + '-field-pattern', pattern).removeAttr('pattern');
                 });
+                $deleteButton.hide();
+                $restoreButton.show();
                 $form.trigger('formDeleted');
             } else {
-                $form.removeAttr('data-formset-form-deleted');
+                $form.removeAttr(_this.opts.deletedForm);
                 // Restore required property and pattern attributes from data field
                 $form.find('*').filter(function() {
                     return $(this).data(pluginName + '-required-field') === true;
@@ -109,6 +121,8 @@
                         $(this).attr('pattern', pattern);
                     }
                 });
+                $deleteButton.show();
+                $restoreButton.hide();
                 $form.trigger('formAdded');
             }
         }
@@ -124,9 +138,11 @@
         window.setTimeout(onChangeDelete);
 
         // Delete the form if the delete button is pressed
-        var $deleteButton = $form.find(this.opts.deleteButton);
         $deleteButton.bind('click', function() {
-            $delete.attr('checked', true).change();
+            $delete.prop('checked', true).change();
+        });
+        $restoreButton.bind('click', function() {
+            $delete.prop('checked', false).change();
         });
     };
 
@@ -142,7 +158,7 @@
     };
 
     Formset.prototype.deletedFormCount = function() {
-        return this.$forms().filter('[data-formset-form-deleted]').length;
+        return this.$forms().filter('[' + this.opts.deletedForm + ']').length;
     };
 
     Formset.prototype.activeFormCount = function() {
@@ -165,16 +181,34 @@
     };
 
     Formset.prototype.animateForms = function() {
+    	var _this = this;
         this.$formset.on('formAdded', this.opts.form, function() {
             var $form = $(this);
             $form.slideUp(0);
             $form.slideDown();
         }).on('formDeleted', this.opts.form, function() {
             var $form = $(this);
-            $form.slideUp();
+            if($form.is(_this.opts.newForm)) $form.slideUp();
         });
-        this.$forms().filter('[data-formset-form-deleted]').slideUp(0);
+        this.$forms().filter(this.opts.newForm + '[' + this.opts.deletedForm + ']').slideUp(0);
     };
+    
+    Formset.prototype.markDeleted = function() {
+    	var _this = this;
+        this.$formset.on('formAdded', this.opts.form, function() {
+            $(this).removeClass(_this.opts.deletedBackgroundClass);
+        }).on('formDeleted', this.opts.form, function() {
+            $(this).addClass(_this.opts.deletedBackgroundClass);
+        });
+        this.$forms().filter('[' + this.opts.deletedForm + ']').addClass(this.opts.deletedBackgroundClass);
+	}
+    
+    Formset.prototype.numberNewForms = function() {
+    	var _this = this;
+        this.$formset.on('formAdded', this.opts.newForm, function() {
+        	$(this).find(_this.opts.numbering).text(_this.totalFormCount());
+        });
+	}
 
     Formset.getOrCreate = function(el, options) {
         var rev = $(el).data(pluginName);
