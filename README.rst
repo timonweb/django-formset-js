@@ -248,7 +248,7 @@ The jQuery plugin takes the following options:
   Defaults to ``false``.
 
 ``numberNewForms``:
-  Whether to populate a sequence number to a new form.
+  Whether to populate a sequence number inside a new form.
   Defaults to ``false``.
 
 Javascript API
