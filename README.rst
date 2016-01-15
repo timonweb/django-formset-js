@@ -98,7 +98,7 @@ certain blocks of your formset need to be marked up with ``data-formset-...`` at
 
         <script>jQuery(function($) {
             $("#formset").formset({
-                animateForms: true
+                animateForms: true,
 				markDeleted: true,
 				numberNewForms: true
             });
@@ -232,7 +232,7 @@ The jQuery plugin takes the following options:
 
 ``deletedBackgroundClass``:
   The class added to a deleted form when ``markDeleted`` is ``true``.
-  Defaults to ``data-formset-form-deleted``.
+  Defaults to ``bg-danger``.
 
 ``hasMaxFormsClass``:
   The class added to the formset when the maximum number of forms is reached.

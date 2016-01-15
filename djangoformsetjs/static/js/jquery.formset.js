@@ -206,7 +206,8 @@
     Formset.prototype.numberNewForms = function() {
     	var _this = this;
         this.$formset.on('formAdded', this.opts.newForm, function() {
-        	$(this).find(_this.opts.numbering).text(_this.totalFormCount());
+        	var numberSection = $(this).find(_this.opts.numbering);
+        	numberSection.text(numberSection.text() || _this.totalFormCount());
         });
 	}
 
