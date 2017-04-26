@@ -126,6 +126,7 @@
         // Delete the form if the delete button is pressed
         $form.on('click', this.opts.deleteButton, function() {
             $delete.attr('checked', true).change();
+
         });
     };
 
