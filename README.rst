@@ -19,7 +19,7 @@ to your ``INSTALLED_APPS``:
     INSTALLED_APPS += (
         'django.contrib.staticfiles',
         'jquery',
-        'djangoformsetjs',
+        'formset_js_deux',
     )
 
 Using
@@ -33,7 +33,7 @@ The simplest way to do this is to add the scripts as media dependencies on your 
 
 .. code-block:: python
 
-    from djangoformsetjs.utils import formset_media_js
+    from formset_js_deux.utils import formset_media_js
 
     class MyForm(forms.Form):
         class Media(object):
