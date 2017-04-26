@@ -1,8 +1,9 @@
-<div data-formset-form>
-    Foo: {{ form.foo }}
+<div data-formset-form{% if newform %} data-formset-form-new{% endif %}>
+    Foo{% if newform %} &#35;<span data-formset-numbering></span>{% endif %}: {{ form.foo }}
     {% if form.DELETE %}
         {{ form.DELETE }}
         <button type="button" data-formset-delete-button>Delete form</button>
+        <button type="button" data-formset-restore-button>Restore form</button>
     {% endif %}
     {% if form.ORDER %}
         {{ form.ORDER }}

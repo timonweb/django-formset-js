@@ -5,6 +5,11 @@
 <title>Django Formset JS example</title>
 
 {{ formset.media }}
+<style type="text/css">
+.bg-danger {
+	background-color: #F2DEDE;
+}
+</style>
 
 </head>
 <body>
@@ -18,7 +23,7 @@
         <div data-formset-body>
             <!-- New forms will be inserted in here -->
             {% for form in formset %}
-                {% include "form.html" with form=form only %}
+                {% include "form.html" with form=form newform=False only %}
             {% endfor %}
         </div>
 
@@ -27,7 +32,7 @@
         any scripts -->
         <script type="form-template" data-formset-empty-form>
             {% escapescript %}
-                {% include "form.html" with form=formset.empty_form only %}
+                {% include "form.html" with form=formset.empty_form newform=True only %}
             {% endescapescript %}
         </script>
 
@@ -37,7 +42,9 @@
         <script>jQuery(function($) {
             $("#formset").formset({
 				'animateForms': true,
-				'reorderMode': 'animate'
+				'reorderMode': 'animate',
+                markDeleted: true,
+                numberNewForms: true
 			}).on('formAdded', function() {
                 console.log("Form added", this, arguments);
             }).on('formDeleted', function() {

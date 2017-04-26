@@ -77,6 +77,7 @@ certain blocks of your formset need to be marked up with ``data-formset-...`` at
                     <button type="button" data-formset-move-up-button>Move up</button>
                     <button type="button" data-formset-move-down-button>Move down</button>
                     <button type="button" data-formset-delete-button>Delete form</button>
+                    <button type="button" data-formset-restore-button>Restore form</button>
                 </div>
             {% endfor %}
         </div>
@@ -86,7 +87,8 @@ certain blocks of your formset need to be marked up with ``data-formset-...`` at
         any scripts -->
         <script type="form-template" data-formset-empty-form>
             {% escapescript %}
-                <div data-formset-form>
+                <div data-formset-form data-formset-form-new>
+                	Form &#35;<span data-formset-numbering></span>
                     {{ formset.empty_form }}
                     <button type="button" data-formset-move-up-button>Move up</button>
                     <button type="button" data-formset-move-down-button>Move down</button>
@@ -102,6 +104,8 @@ certain blocks of your formset need to be marked up with ``data-formset-...`` at
             $("#formset").formset({
                 animateForms: true,
                 reorderMode: 'dom',
+				        markDeleted: true,
+				        numberNewForms: true
             });
         });</script>
 
@@ -120,6 +124,9 @@ The ``data-formset-`` data attributes are:
 ``data-formset-form``
   Every form (including the empty form) should have this attribute.
 
+``data-formset-form-new``
+  This indicates that this a new form. Use it along side data-formset-form for a new empty form.
+
 ``data-formset-empty-form``
   The element that contains the empty form template.
   For best results, use a ``<script>`` tag.
@@ -135,6 +142,12 @@ The ``data-formset-`` data attributes are:
 
 ``data-formset-move-down-button``
   A button that moves that form one row down in a sortable formset.
+
+``data-formset-restore-button``
+  A button that restores (undelete) that form.
+
+``data-formset-numbering``
+  A section that populates with a number to indicate the sequence of a new form in the formset, emulating how Django admin add a new form for a formset. It should only stays inside ``data-formset-form-new`` and only populates number when ``numberNewForms`` is true.
 
 The empty form template is wrapped in a ``<script>`` as plain text.
 This stops any JavaScript attached to widgets from running upon page load,
@@ -211,6 +224,10 @@ The jQuery plugin takes the following options:
   The selector to find forms.
   Defaults to ``[data-formset-form]``.
 
+``newForm``:
+  The selector to find new forms.
+  Defaults to ``[data-formset-form-new]``.
+
 ``emptyForm``:
   The selector to find the empty form template.
   Defaults to ``script[type=form-template][data-formset-empty-form]``.
@@ -228,6 +245,22 @@ The jQuery plugin takes the following options:
   The selector to find the delete button within a form.
   Defaults to ``[data-formset-delete-button]``.
 
+``restoreButton``:
+  The selector to find the restore button within a form.
+  Defaults to ``[data-formset-restore-button]``.
+
+``numbering``:
+  The selector to find the section within a form to populate form sequence.
+  Defaults to ``[data-formset-numbering]``.
+
+``deletedForm``:
+  The attribute added to a deleted form.
+  Defaults to ``data-formset-form-deleted``.
+
+``deletedBackgroundClass``:
+  The class added to a deleted form when ``markDeleted`` is ``true``.
+  Defaults to ``bg-danger``.
+
 ``hasMaxFormsClass``:
   The class added to the formset when the maximum number of forms is reached.
   The maximum number of forms is pulled from the management form.
@@ -239,6 +272,14 @@ The jQuery plugin takes the following options:
 ``reorderMode``:
   Can be ``none``, ``dom`` or ``animate``, see above for an explaination.
   Defaults to ``none``.
+  Defaults to ``false``.
+
+``markDeleted``:
+  Whether to add ``deletedBackgroundClass` class to a deleted form.
+  Defaults to ``false``.
+
+``numberNewForms``:
+  Whether to populate a sequence number inside a new form.
   Defaults to ``false``.
 
 Javascript API
