@@ -1,6 +1,6 @@
-=================
-django-formset-js
-=================
+======================
+django-formset-js-deux
+======================
 
 A wrapper for a JavaScript formset helper.
 
@@ -9,7 +9,7 @@ Installing
 
 Install via pip::
 
-    pip install django-formset-js
+    pip install
 
 Then add it and its dependancy ``django-jquery-js``
 to your ``INSTALLED_APPS``:
